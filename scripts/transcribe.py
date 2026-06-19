@@ -158,15 +158,16 @@ def save_transcript(video_id: str, title: str, published_parsed, transcript: str
         date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     safe_title = sanitize_filename(title)
-    filename = f"{date_str}_{video_id}_{safe_title}.txt"
+    filename = f"{date_str}_{video_id}_{safe_title}.md"
     filepath = TRANSCRIPTS_DIR / filename
 
+    video_url = f"https://www.youtube.com/watch?v={video_id}"
+    link_safe_title = title.replace("[", "(").replace("]", ")")
+
     with open(filepath, "w", encoding="utf-8") as f:
-        f.write(f"Title: {title}\n")
-        f.write(f"Video ID: {video_id}\n")
-        f.write(f"URL: https://www.youtube.com/watch?v={video_id}\n")
-        f.write("\n---\n\n")
-        f.write(transcript)
+        f.write(f"Title - [{link_safe_title}]({video_url})\n")
+        f.write(f"Date - {date_str}\n")
+        f.write(f"Transcript - {transcript}\n")
 
     return filepath
 
