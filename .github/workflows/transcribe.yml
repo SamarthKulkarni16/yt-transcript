@@ -23,9 +23,24 @@ jobs:
 
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
+  
       - name: Install Python dependencies
         run: pip install -r requirements.txt
+
+      - name: Set up Node.js (for PO token provider server)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up PO token provider server
+        run: |
+          git clone https://github.com/Brainicism/bgutil-ytdlp-pot-provider.git /tmp/bgutil-pot
+          cd /tmp/bgutil-pot/server
+          npm install
+          npx tsc
+          nohup node build/main.js > /tmp/bgutil-pot.log 2>&1 &
+          sleep 5
+          cat /tmp/bgutil-pot.log
 
       - name: Run transcription pipeline
         run: python scripts/transcribe.py
